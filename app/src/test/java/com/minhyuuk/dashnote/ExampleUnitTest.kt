@@ -1,4 +1,4 @@
-package com.example.dashnote
+package com.minhyuuk.dashnote
 
 import org.junit.Test
 

@@ -1,6 +1,5 @@
-package com.example.dashnote.ui.theme
+package com.minhyuuk.dashnote.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

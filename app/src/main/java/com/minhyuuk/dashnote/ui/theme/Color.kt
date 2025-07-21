@@ -1,4 +1,4 @@
-package com.example.dashnote.ui.theme
+package com.minhyuuk.dashnote.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
