@@ -1,0 +1,25 @@
+---
+description: 파일 구조
+globs:
+  - '**/ui/screen/**'
+  - '**/ui/components/**'
+  - '**/ui/theme/**'
+  - '**/data/database/**'
+  - '**/data/repository/**'
+  - '**/data/model/**'
+  - '**/domain/repository/**'
+  - '**/domain/usecase/**'
+  - '**/di/**'
+  - '**/util/**'
+alwaysApply: true
+---
+ALWAYS follow this package structure:
+com.minhyuuk.dashnote/
+├── ui/screen/{feature}/           # 화면별 패키지
+├── ui/components/                 # 공통 Composable
+├── ui/theme/                      # Material 3 테마
+├── data/database/                 # Room 관련
+├── data/repository/               # Repository 구현체
+├── domain/repository/             # Repository 인터페이스 (3주차+)
+├── domain/usecase/                # UseCase (3주차+)
+└── di/                            # Hilt 모듈
