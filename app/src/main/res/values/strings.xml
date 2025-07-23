@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">DashNote</string>
+    <string name="search_note_hint">Search your notes…</string>
 </resources>
