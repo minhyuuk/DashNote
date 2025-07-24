@@ -25,6 +25,9 @@ import androidx.compose.ui.unit.sp
 import com.minhyuuk.dashnote.R
 import com.minhyuuk.dashnote.ui.extensions.dashedBorder
 import com.minhyuuk.dashnote.ui.theme.DashNoteTheme
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.clickable
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,6 +35,7 @@ import com.minhyuuk.dashnote.ui.theme.DashNoteTheme
 fun MemoListScreen() {
     var searchText by remember { mutableStateOf("") }
     var selectedSortOrder by remember { mutableStateOf("최신순") }
+    var expanded by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -55,24 +59,56 @@ fun MemoListScreen() {
                     }
                 },
                 actions = {
-                    Box(
-                        modifier = Modifier
-                            .dashedBorder(
-                                strokeWidth = with(LocalDensity.current) { 1.dp.toPx() },
-                                color = colorResource(id = R.color.gray_b8b8b8),
-                                cornerRadius = with(LocalDensity.current) { 10.dp.toPx() }
+                    Box {
+                        Box(
+                            modifier = Modifier
+                                .dashedBorder(
+                                    strokeWidth = with(LocalDensity.current) { 1.dp.toPx() },
+                                    color = colorResource(id = R.color.gray_b8b8b8),
+                                    cornerRadius = with(LocalDensity.current) { 10.dp.toPx() }
+                                )
+                                .wrapContentHeight()
+                                .clickable { expanded = !expanded }
+                        ) {
+                            Text(
+                                text = selectedSortOrder,
+                                fontSize = 14.sp,
+                                color = Color.Black,
+                                modifier = Modifier
+                                    .align(Alignment.CenterStart)
+                                    .padding(horizontal = 24.dp, vertical = 8.dp)
+                                    .padding(end = 8.dp)
                             )
-                            .padding(horizontal = 30.dp, vertical = 8.dp)
-                    ) {
-                        Text(
-                            text = selectedSortOrder,
-                            color = Color.Black,
-                            fontSize = 14.sp
-                        )
-//                        Icon(
-//                            painter = painterResource(id = R.drawable.baseline_keyboard_arrow_down_24),
-//                            contentDescription = "정렬 옵션 선택 아이콘"
-//                        )
+                            Icon(
+                                painter = painterResource(id = R.drawable.baseline_keyboard_arrow_down_24),
+                                contentDescription = "정렬 옵션 선택",
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .align(Alignment.CenterEnd)
+                                    .padding(end = 8.dp),
+                                tint = Color.Black
+                            )
+                        }
+
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("최신순") },
+                                onClick = {
+                                    selectedSortOrder = "최신순"
+                                    expanded = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("제목순") },
+                                onClick = {
+                                    selectedSortOrder = "제목순"
+                                    expanded = false
+                                }
+                            )
+                        }
                     }
                     Spacer(modifier = Modifier.width(20.dp))
                 },
