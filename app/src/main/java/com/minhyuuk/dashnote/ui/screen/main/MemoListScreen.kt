@@ -1,4 +1,4 @@
-package com.minhyuuk.dashnote.ui.screen
+package com.minhyuuk.dashnote.ui.screen.main
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -31,7 +31,9 @@ import com.minhyuuk.dashnote.ui.components.MemoCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MemoListScreen() {
+fun MemoListScreen(
+    onCreateMemoClick: () -> Unit = {}
+) {
     var searchText by remember { mutableStateOf("") }
     var selectedSortOrder by remember { mutableStateOf("최신순") }
     var expanded by remember { mutableStateOf(false) }
@@ -120,7 +122,7 @@ fun MemoListScreen() {
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /* 메모 추가 */ },
+                onClick = onCreateMemoClick,
                 modifier = Modifier.size(48.dp),
                 shape = RoundedCornerShape(4.dp),
                 containerColor = MaterialTheme.colorScheme.primary

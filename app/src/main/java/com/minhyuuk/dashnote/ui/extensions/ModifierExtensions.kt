@@ -7,7 +7,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 
-// 점선 테두리를 그리는 확장 함수
 fun Modifier.dashedBorder(
     strokeWidth: Float,
     color: Color,

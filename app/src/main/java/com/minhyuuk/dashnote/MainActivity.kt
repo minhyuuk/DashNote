@@ -4,9 +4,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.minhyuuk.dashnote.ui.screen.MemoListScreen
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.minhyuuk.dashnote.ui.screen.create.MemoCreateScreen
+import com.minhyuuk.dashnote.ui.screen.main.MemoListScreen
 import com.minhyuuk.dashnote.ui.theme.DashNoteTheme
 
 class MainActivity : ComponentActivity() {
@@ -15,8 +21,37 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             DashNoteTheme {
-                MemoListScreen()
+                DashNoteApp()
             }
+        }
+    }
+}
+
+@Composable
+fun DashNoteApp() {
+    val navController = rememberNavController()
+    
+    NavHost(
+        navController = navController,
+        startDestination = "memo_list",
+        enterTransition = { slideInHorizontally(initialOffsetX = { it }) },
+        exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) },
+        popEnterTransition = { slideInHorizontally(initialOffsetX = { -it }) },
+        popExitTransition = { slideOutHorizontally(targetOffsetX = { it }) }
+    ) {
+        composable("memo_list") {
+            MemoListScreen(
+                onCreateMemoClick = {
+                    navController.navigate("memo_create")
+                }
+            )
+        }
+        composable("memo_create") {
+            MemoCreateScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }
@@ -25,6 +60,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Preview() {
     DashNoteTheme {
-        MemoListScreen()
+        DashNoteApp()
     }
 }
