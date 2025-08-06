@@ -1,7 +1,6 @@
 package com.minhyuuk.dashnote.ui.screen
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,6 +25,8 @@ import com.minhyuuk.dashnote.ui.theme.DashNoteTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.clickable
+import com.minhyuuk.dashnote.data.model.memo.MemoData
+import com.minhyuuk.dashnote.ui.components.MemoCard
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -174,26 +175,20 @@ fun MemoListScreen() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // 메모 아이템들이 여기에 추가될 예정
                 items(10) { index ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(60.dp)
-                            .border(
-                                width = 1.dp,
-                                color = MaterialTheme.colorScheme.outline,
-                                shape = RoundedCornerShape(8.dp)
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "메모 아이템 $index (구현 예정)",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+                    MemoCard(
+                        memoData = MemoData(
+                            title = "메모 제목 $index",
+                            description = "메모 내용이 여기에 들어갑니다. 이 메모는 예시로 작성된 것입니다.",
+                            createdDate = "2023-10-01",
+                            createdTime = "12:00 PM"
+                        ),
+                        isFirstItem = index == 0,
+                        onCardClick = {},
+                        onDeleteClick = {}
+                    )
                 }
             }
         }
