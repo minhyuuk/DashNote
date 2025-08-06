@@ -51,7 +51,7 @@ fun MemoListScreen() {
                         )
                         Text(
                             text = stringResource(id = R.string.app_name),
-                            color = Color.Black,
+                            color = MaterialTheme.colorScheme.onSurface,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Medium,
                             modifier = Modifier.padding(start = 8.dp)
@@ -64,7 +64,7 @@ fun MemoListScreen() {
                             modifier = Modifier
                                 .dashedBorder(
                                     strokeWidth = with(LocalDensity.current) { 1.dp.toPx() },
-                                    color = colorResource(id = R.color.gray_b8b8b8),
+                                    color = MaterialTheme.colorScheme.outline,
                                     cornerRadius = with(LocalDensity.current) { 10.dp.toPx() }
                                 )
                                 .wrapContentHeight()
@@ -73,7 +73,7 @@ fun MemoListScreen() {
                             Text(
                                 text = selectedSortOrder,
                                 fontSize = 14.sp,
-                                color = Color.Black,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier
                                     .align(Alignment.CenterStart)
                                     .padding(horizontal = 24.dp, vertical = 8.dp)
@@ -86,7 +86,7 @@ fun MemoListScreen() {
                                     .size(24.dp)
                                     .align(Alignment.CenterEnd)
                                     .padding(end = 8.dp),
-                                tint = Color.Black
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
 
@@ -113,7 +113,9 @@ fun MemoListScreen() {
                     Spacer(modifier = Modifier.width(20.dp))
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface,
+                    actionIconContentColor = MaterialTheme.colorScheme.onSurface
                 )
             )
         },
@@ -128,7 +130,7 @@ fun MemoListScreen() {
                     imageVector = Icons.Default.Add,
                     contentDescription = "Add Memo",
                     modifier = Modifier.size(24.dp),
-                    tint = Color.White
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
         }
@@ -145,7 +147,7 @@ fun MemoListScreen() {
                     .padding(horizontal = 20.dp, vertical = 20.dp)
                     .dashedBorder(
                         strokeWidth = with(LocalDensity.current) { 1.dp.toPx() },
-                        color = colorResource(id = R.color.gray_b8b8b8),
+                        color = MaterialTheme.colorScheme.outline,
                         cornerRadius = with(LocalDensity.current) { 10.dp.toPx() }
                     )
                     .padding(horizontal = 16.dp, vertical = 12.dp)
@@ -154,7 +156,7 @@ fun MemoListScreen() {
                     value = searchText,
                     onValueChange = { searchText = it },
                     textStyle = TextStyle(
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 16.sp
                     ),
                     modifier = Modifier.fillMaxWidth(),
@@ -162,7 +164,7 @@ fun MemoListScreen() {
                         if (searchText.isEmpty()) {
                             Text(
                                 text = stringResource(id = R.string.search_note_hint),
-                                color = colorResource(id = R.color.gray_b8b8b8),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontSize = 16.sp
                             )
                         }
@@ -184,14 +186,14 @@ fun MemoListScreen() {
                             .height(60.dp)
                             .border(
                                 width = 1.dp,
-                                color = colorResource(id = R.color.gray_b8b8b8),
+                                color = MaterialTheme.colorScheme.outline,
                                 shape = RoundedCornerShape(8.dp)
                             ),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = "메모 아이템 $index (구현 예정)",
-                            color = colorResource(id = R.color.gray_b8b8b8)
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
