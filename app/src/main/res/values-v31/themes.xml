@@ -3,7 +3,7 @@
     <!-- 기본 앱 테마 -->
     <style name="Theme.DashNote" parent="android:Theme.Material.Light.NoActionBar" />
     
-    <!-- Launch Screen 전용 테마 (Android 12 이전) -->
+    <!-- Launch Screen 전용 테마 (Android 12+) -->
     <style name="Theme.DashNote.Launch" parent="Theme.DashNote">
         <item name="android:windowBackground">@drawable/launch_background</item>
         <item name="android:windowNoTitle">true</item>
@@ -11,5 +11,9 @@
         <item name="android:windowFullscreen">false</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowDisablePreview">true</item>
+        <!-- Android 12+ 전용 속성 -->
+        <item name="android:windowSplashScreenBackground">@android:color/white</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/baseline_note_24</item>
+        <item name="android:windowSplashScreenAnimationDuration">200</item>
     </style>
 </resources>
