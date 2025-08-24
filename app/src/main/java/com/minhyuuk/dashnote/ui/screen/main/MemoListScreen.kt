@@ -121,18 +121,22 @@ fun MemoListScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = onCreateMemoClick,
-                modifier = Modifier.size(48.dp),
-                shape = RoundedCornerShape(4.dp),
-                containerColor = MaterialTheme.colorScheme.primary
+            Box(
+                modifier = Modifier.navigationBarsPadding()
             ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add Memo",
-                    modifier = Modifier.size(24.dp),
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
+                FloatingActionButton(
+                    onClick = onCreateMemoClick,
+                    modifier = Modifier.size(48.dp),
+                    shape = RoundedCornerShape(4.dp),
+                    containerColor = MaterialTheme.colorScheme.primary
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add Memo",
+                        modifier = Modifier.size(24.dp),
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
             }
         }
     ) { paddingValues ->
@@ -177,7 +181,8 @@ fun MemoListScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 80.dp)
             ) {
                 items(10) { index ->
                     MemoCard(
