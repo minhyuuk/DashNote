@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
@@ -39,7 +40,7 @@ fun MemoCard(
     var offsetX by remember { mutableFloatStateOf(0f) }
     val maxSwipeDistance = with(density) { 100.dp.toPx() }
     val topPadding = if (isFirstItem) 8.dp else 0.dp
-    
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -58,7 +59,7 @@ fun MemoCard(
                     .height(150.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .background(Color.Red)
-                    .clickable { 
+                    .clickable {
                         onDeleteClick()
                         offsetX = 0f
                     },
@@ -84,7 +85,7 @@ fun MemoCard(
                 }
             }
         }
-        
+
         // 메모 카드 (앞쪽에 위치)
         Card(
             modifier = Modifier
@@ -107,7 +108,7 @@ fun MemoCard(
                         offsetX = newOffset.coerceIn(-maxSwipeDistance, 0f)
                     }
                 }
-                .clickable { 
+                .clickable {
                     if (offsetX == 0f) {
                         onCardClick()
                     } else {
@@ -145,17 +146,19 @@ fun MemoCard(
                             .weight(0.6f)
                             .padding(start = 8.dp)
                     )
-                    
+
                     // Date (4/10 비율)
                     Text(
                         text = memoData.createdDate,
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.weight(0.4f).padding(end = 8.dp),
+                        modifier = Modifier
+                            .weight(0.4f)
+                            .padding(end = 8.dp),
                         textAlign = TextAlign.End
                     )
                 }
-                
+
                 // Description
                 Text(
                     text = memoData.description,
@@ -168,12 +171,12 @@ fun MemoCard(
                         .padding(start = 8.dp, top = 8.dp)
                         .weight(1f)
                 )
-                
+
                 // Time과 Export dot
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(end = 8.dp, bottom = 8.dp),
+                        .padding(start = 8.dp, end = 8.dp, bottom = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -181,7 +184,10 @@ fun MemoCard(
                         imageVector = Icons.Default.MoreVert,
                         contentDescription = "메모 옵션",
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(16.dp)
+                        modifier =
+                            Modifier
+                                .size(16.dp)
+                                .rotate(90f)
                     )
                     Text(
                         text = memoData.createdTime,
@@ -211,7 +217,7 @@ fun MemoCardPreview() {
                     createdTime = "14:30"
                 )
             )
-            
+
             MemoCard(
                 memoData = MemoData(
                     title = "긴 제목을 가진 메모입니다 이것은 한 줄을 넘어갈 것입니다",
