@@ -27,11 +27,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.clickable
 import com.minhyuuk.dashnote.data.model.memo.MemoData
 import com.minhyuuk.dashnote.ui.components.MemoCard
+import com.minhyuuk.dashnote.ui.components.EmptyState
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MemoListScreen(
+    memoList: List<MemoData> = emptyList(),
     onCreateMemoClick: () -> Unit = {}
 ) {
     var searchText by remember { mutableStateOf("") }
@@ -140,63 +142,71 @@ fun MemoListScreen(
             }
         }
     ) { paddingValues ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            // 검색바
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 20.dp)
-                    .dashedBorder(
-                        strokeWidth = with(LocalDensity.current) { 1.dp.toPx() },
-                        color = MaterialTheme.colorScheme.outline,
-                        cornerRadius = with(LocalDensity.current) { 10.dp.toPx() }
-                    )
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
+            Column(
+                modifier = Modifier.fillMaxSize()
             ) {
-                BasicTextField(
-                    value = searchText,
-                    onValueChange = { searchText = it },
-                    textStyle = TextStyle(
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 16.sp
-                    ),
-                    modifier = Modifier.fillMaxWidth(),
-                    decorationBox = { innerTextField ->
-                        if (searchText.isEmpty()) {
-                            Text(
-                                text = stringResource(id = R.string.search_note_hint),
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                fontSize = 16.sp
-                            )
-                        }
-                        innerTextField()
-                    }
-                )
-            }
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 80.dp)
-            ) {
-                items(10) { index ->
-                    MemoCard(
-                        memoData = MemoData(
-                            title = "메모 제목 $index",
-                            description = "메모 내용이 여기에 들어갑니다. 이 메모는 예시로 작성된 것입니다.",
-                            createdDate = "2023-10-01",
-                            createdTime = "12:00 PM"
+                // 검색바
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 20.dp)
+                        .dashedBorder(
+                            strokeWidth = with(LocalDensity.current) { 1.dp.toPx() },
+                            color = MaterialTheme.colorScheme.outline,
+                            cornerRadius = with(LocalDensity.current) { 10.dp.toPx() }
+                        )
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                ) {
+                    BasicTextField(
+                        value = searchText,
+                        onValueChange = { searchText = it },
+                        textStyle = TextStyle(
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontSize = 16.sp
                         ),
-                        isFirstItem = index == 0,
-                        onCardClick = {},
-                        onDeleteClick = {}
+                        modifier = Modifier.fillMaxWidth(),
+                        decorationBox = { innerTextField ->
+                            if (searchText.isEmpty()) {
+                                Text(
+                                    text = stringResource(id = R.string.search_note_hint),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    fontSize = 16.sp
+                                )
+                            }
+                            innerTextField()
+                        }
                     )
                 }
+
+                if(memoList.isNotEmpty()){
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        contentPadding = PaddingValues(bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 80.dp)
+                    ) {
+                        items(memoList.size) { index ->
+                            MemoCard(
+                                memoData = memoList[index],
+                                isFirstItem = index == 0,
+                                onCardClick = {},
+                                onDeleteClick = {}
+                            )
+                        }
+                    }
+                }
+            }
+            
+            if (memoList.isEmpty()) {
+                EmptyState(
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
         }
     }
@@ -207,5 +217,28 @@ fun MemoListScreen(
 fun MemoListScreenPreview() {
     DashNoteTheme {
         MemoListScreen()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MemoListScreenWithDataPreview() {
+    DashNoteTheme {
+        MemoListScreen(
+            memoList = listOf(
+                MemoData(
+                    title = "메모 제목 1",
+                    description = "메모 내용이 여기에 들어갑니다. 이 메모는 예시로 작성된 것입니다.",
+                    createdDate = "2023-10-01",
+                    createdTime = "12:00 PM"
+                ),
+                MemoData(
+                    title = "메모 제목 2",
+                    description = "두 번째 메모의 내용입니다.",
+                    createdDate = "2023-10-02",
+                    createdTime = "2:30 PM"
+                )
+            )
+        )
     }
 }

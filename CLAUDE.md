@@ -30,7 +30,7 @@
   2. 핵심 기능
 
   1. 메모 리스트 화면 (MemoListScreen): 검색, 정렬, 메모 표시
-  2. 메모 생성 화면 (MemoCreateScreen): 제목/내용 입력
+  2. 메모 생성 및 수정 화면 (MemoEditScreen): 제목/내용 입력
   3. 메모 카드 컴포넌트 (MemoCard): 스와이프 삭제 기능
 
   코드 가이드라인
