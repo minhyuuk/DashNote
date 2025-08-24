@@ -136,7 +136,7 @@ fun MemoCard(
                 ) {
                     // Title (6/10 비율)
                     Text(
-                        text = memoData.title,
+                        text = memoData.title ?: "",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
@@ -161,7 +161,7 @@ fun MemoCard(
 
                 // Description
                 Text(
-                    text = memoData.description,
+                    text = memoData.description ?: "",
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 3,
