@@ -80,7 +80,9 @@ dependencies {
 
     // Hilt + KSP
     implementation(libs.hilt.android)
+    implementation(libs.hilt.navigation.compose)
     ksp(libs.hilt.compiler)
+
 
     // Room + KSP
     implementation(libs.room.runtime)
