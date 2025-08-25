@@ -11,11 +11,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.minhyuuk.dashnote.ui.screen.create.MemoCreateScreen
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.minhyuuk.dashnote.ui.screen.edit.MemoEditScreen
+import com.minhyuuk.dashnote.ui.screen.edit.viewmodel.MemoEditViewModel
 import com.minhyuuk.dashnote.ui.screen.main.MemoListScreen
 import com.minhyuuk.dashnote.ui.theme.DashNoteTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -47,10 +52,9 @@ fun DashNoteApp() {
             )
         }
         composable("memo_create") {
-            MemoCreateScreen(
-                onBackClick = {
-                    navController.popBackStack()
-                }
+            MemoEditScreen(
+                onBackClick = { navController.popBackStack() },
+                viewModel = hiltViewModel<MemoEditViewModel>()
             )
         }
     }
