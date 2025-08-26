@@ -38,16 +38,6 @@ fun MemoEditScreen(
     val titleText by viewModel.title.collectAsStateWithLifecycle()
     val descriptionText by viewModel.description.collectAsStateWithLifecycle()
     val isSaving by viewModel.isSaving.collectAsStateWithLifecycle()
-    val context = LocalContext.current
-    
-    LaunchedEffect(isSaving) {
-        Timber.d("MemoEditScreen - isSaving 상태 변화: $isSaving")
-        if (!isSaving && viewModel.hasContent()) {
-            Timber.i("메모 저장 완료 - 제목: ${titleText.take(20)}, 내용: ${descriptionText.take(30)}")
-        } else if (!isSaving && !viewModel.hasContent()) {
-            Timber.w("메모 저장 시도했으나 내용이 비어있음")
-        }
-    }
     
     val handleBackClick = {
         Timber.d("뒤로가기 버튼 클릭 - 메모 저장 시작")
@@ -55,7 +45,7 @@ fun MemoEditScreen(
         viewModel.saveMemo(onBackClick)
     }
     
-    BackHandler {
+    BackHandler(enabled = !isSaving) {
         Timber.d("하드웨어 백 버튼/제스처 - 메모 저장 시작")
         handleBackClick()
     }
@@ -82,11 +72,17 @@ fun MemoEditScreen(
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = handleBackClick) {
+                    IconButton(
+                        onClick = handleBackClick,
+                        enabled = !isSaving
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onSurface
+                            tint = if (isSaving) 
+                                MaterialTheme.colorScheme.onSurfaceVariant 
+                            else 
+                                MaterialTheme.colorScheme.onSurface
                         )
                     }
                 },
@@ -108,9 +104,13 @@ fun MemoEditScreen(
                 Spacer(modifier = Modifier.height(20.dp))
                 BasicTextField(
                     value = titleText,
-                    onValueChange = viewModel::updateTitle,
+                    onValueChange = if (isSaving) {{ }} else viewModel::updateTitle,
+                    enabled = !isSaving,
                     textStyle = TextStyle(
-                        color = MaterialTheme.colorScheme.onSurface,
+                        color = if (isSaving) 
+                            MaterialTheme.colorScheme.onSurfaceVariant 
+                        else 
+                            MaterialTheme.colorScheme.onSurface,
                         fontSize = 30.sp,
                         fontWeight = FontWeight.Medium
                     ),
@@ -143,9 +143,13 @@ fun MemoEditScreen(
                 ) {
                     BasicTextField(
                         value = descriptionText,
-                        onValueChange = viewModel::updateDescription,
+                        onValueChange = if (isSaving) {{ }} else viewModel::updateDescription,
+                        enabled = !isSaving,
                         textStyle = TextStyle(
-                            color = MaterialTheme.colorScheme.onSurface,
+                            color = if (isSaving) 
+                                MaterialTheme.colorScheme.onSurfaceVariant 
+                            else 
+                                MaterialTheme.colorScheme.onSurface,
                             fontSize = 18.sp
                         ),
                         modifier = Modifier.fillMaxSize(),
