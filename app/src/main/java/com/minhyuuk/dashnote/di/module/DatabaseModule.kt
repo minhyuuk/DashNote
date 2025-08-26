@@ -3,6 +3,7 @@ package com.minhyuuk.dashnote.di.module
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.minhyuuk.dashnote.BuildConfig
 import com.minhyuuk.dashnote.data.database.MemoDatabase
 import com.minhyuuk.dashnote.data.model.memo.MemoDao
 import dagger.Module
@@ -25,13 +26,14 @@ object DatabaseModule {
             context,
             MemoDatabase::class.java,
             MemoDatabase.DATABASE_NAME
-        )
-        .fallbackToDestructiveMigration()
-        .setQueryCallback(RoomDatabase.QueryCallback { sqlQuery, bindArgs ->
-            Timber.d("Room SQL 쿼리 : $sqlQuery")
-            Timber.d("Room Bind Args : $bindArgs")
-        }, Executors.newSingleThreadExecutor())
-        .build()
+        ).apply {
+            if (BuildConfig.DEBUG) {
+                setQueryCallback(RoomDatabase.QueryCallback { sqlQuery, bindArgs ->
+                    Timber.d("Room SQL 쿼리 : $sqlQuery")
+                    Timber.d("Room Bind Args : $bindArgs")
+                }, Executors.newSingleThreadExecutor())
+            }
+        }.build()
     }
 
     @Provides
