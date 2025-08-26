@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.minhyuuk.dashnote.R
 import com.minhyuuk.dashnote.ui.extensions.dashedBorder
 import com.minhyuuk.dashnote.ui.theme.DashNoteTheme
@@ -28,16 +29,21 @@ import androidx.compose.foundation.clickable
 import com.minhyuuk.dashnote.data.model.memo.MemoData
 import com.minhyuuk.dashnote.ui.components.MemoCard
 import com.minhyuuk.dashnote.ui.components.EmptyState
+import com.minhyuuk.dashnote.ui.screen.main.viewmodel.MemoListViewModelInterface
+import com.minhyuuk.dashnote.ui.screen.main.viewmodel.FakeMemoListViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MemoListScreen(
-    memoList: List<MemoData> = emptyList(),
+    viewModel: MemoListViewModelInterface,
     onCreateMemoClick: () -> Unit = {}
 ) {
-    var searchText by remember { mutableStateOf("") }
-    var selectedSortOrder by remember { mutableStateOf("최신순") }
+    val memoList by viewModel.memos.collectAsStateWithLifecycle()
+    val searchText by viewModel.searchText.collectAsStateWithLifecycle()
+    val selectedSortOrder by viewModel.sortOrder.collectAsStateWithLifecycle()
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+    
     var expanded by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -67,16 +73,22 @@ fun MemoListScreen(
                             modifier = Modifier
                                 .dashedBorder(
                                     strokeWidth = with(LocalDensity.current) { 1.dp.toPx() },
-                                    color = MaterialTheme.colorScheme.outline,
+                                    color = if (isLoading) 
+                                        MaterialTheme.colorScheme.outlineVariant 
+                                    else 
+                                        MaterialTheme.colorScheme.outline,
                                     cornerRadius = with(LocalDensity.current) { 10.dp.toPx() }
                                 )
                                 .wrapContentHeight()
-                                .clickable { expanded = !expanded }
+                                .clickable(enabled = !isLoading) { expanded = !expanded }
                         ) {
                             Text(
                                 text = selectedSortOrder,
                                 fontSize = 14.sp,
-                                color = MaterialTheme.colorScheme.onSurface,
+                                color = if (isLoading) 
+                                    MaterialTheme.colorScheme.onSurfaceVariant 
+                                else 
+                                    MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier
                                     .align(Alignment.CenterStart)
                                     .padding(horizontal = 24.dp, vertical = 8.dp)
@@ -89,7 +101,10 @@ fun MemoListScreen(
                                     .size(24.dp)
                                     .align(Alignment.CenterEnd)
                                     .padding(end = 8.dp),
-                                tint = MaterialTheme.colorScheme.onSurface
+                                tint = if (isLoading) 
+                                    MaterialTheme.colorScheme.onSurfaceVariant 
+                                else 
+                                    MaterialTheme.colorScheme.onSurface
                             )
                         }
 
@@ -100,14 +115,14 @@ fun MemoListScreen(
                             DropdownMenuItem(
                                 text = { Text("최신순") },
                                 onClick = {
-                                    selectedSortOrder = "최신순"
+                                    viewModel.updateSortOrder("최신순")
                                     expanded = false
                                 }
                             )
                             DropdownMenuItem(
                                 text = { Text("제목순") },
                                 onClick = {
-                                    selectedSortOrder = "제목순"
+                                    viewModel.updateSortOrder("제목순")
                                     expanded = false
                                 }
                             )
@@ -127,16 +142,22 @@ fun MemoListScreen(
                 modifier = Modifier.navigationBarsPadding()
             ) {
                 FloatingActionButton(
-                    onClick = onCreateMemoClick,
+                    onClick = if (isLoading) {{ }} else onCreateMemoClick,
                     modifier = Modifier.size(48.dp),
                     shape = RoundedCornerShape(4.dp),
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = if (isLoading) 
+                        MaterialTheme.colorScheme.surfaceVariant 
+                    else 
+                        MaterialTheme.colorScheme.primary
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "Add Memo",
                         modifier = Modifier.size(24.dp),
-                        tint = MaterialTheme.colorScheme.onPrimary
+                        tint = if (isLoading) 
+                            MaterialTheme.colorScheme.onSurfaceVariant 
+                        else 
+                            MaterialTheme.colorScheme.onPrimary
                     )
                 }
             }
@@ -164,9 +185,13 @@ fun MemoListScreen(
                 ) {
                     BasicTextField(
                         value = searchText,
-                        onValueChange = { searchText = it },
+                        onValueChange = if (isLoading) {{ }} else viewModel::updateSearchText,
+                        enabled = !isLoading,
                         textStyle = TextStyle(
-                            color = MaterialTheme.colorScheme.onSurface,
+                            color = if (isLoading) 
+                                MaterialTheme.colorScheme.onSurfaceVariant 
+                            else 
+                                MaterialTheme.colorScheme.onSurface,
                             fontSize = 16.sp
                         ),
                         modifier = Modifier.fillMaxWidth(),
@@ -196,17 +221,56 @@ fun MemoListScreen(
                                 memoData = memoList[index],
                                 isFirstItem = index == 0,
                                 onCardClick = {},
-                                onDeleteClick = {}
+                                onDeleteClick = { 
+                                    viewModel.deleteMemo(memoList[index])
+                                }
                             )
                         }
                     }
                 }
             }
             
-            if (memoList.isEmpty()) {
-                EmptyState(
-                    modifier = Modifier.align(Alignment.Center)
-                )
+            // 로딩 상태 처리
+            when {
+                isLoading -> {
+                    // 로딩 인디케이터
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = 100.dp),
+                        contentAlignment = Alignment.TopCenter
+                    ) {
+                        Card(
+                            modifier = Modifier.padding(16.dp),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surface
+                            )
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(20.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(24.dp),
+                                    strokeWidth = 2.dp,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                                Text(
+                                    text = "메모를 불러오는 중...",
+                                    modifier = Modifier.padding(start = 16.dp),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                        }
+                    }
+                }
+                memoList.isEmpty() -> {
+                    EmptyState(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
             }
         }
     }
@@ -216,7 +280,9 @@ fun MemoListScreen(
 @Composable
 fun MemoListScreenPreview() {
     DashNoteTheme {
-        MemoListScreen()
+        MemoListScreen(
+            viewModel = FakeMemoListViewModel
+        )
     }
 }
 
@@ -225,20 +291,7 @@ fun MemoListScreenPreview() {
 fun MemoListScreenWithDataPreview() {
     DashNoteTheme {
         MemoListScreen(
-            memoList = listOf(
-                MemoData(
-                    title = "메모 제목 1",
-                    description = "메모 내용이 여기에 들어갑니다. 이 메모는 예시로 작성된 것입니다.",
-                    createdDate = "2023-10-01",
-                    createdTime = "12:00 PM"
-                ),
-                MemoData(
-                    title = "메모 제목 2",
-                    description = "두 번째 메모의 내용입니다.",
-                    createdDate = "2023-10-02",
-                    createdTime = "2:30 PM"
-                )
-            )
+            viewModel = FakeMemoListViewModel
         )
     }
 }

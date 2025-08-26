@@ -15,6 +15,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.minhyuuk.dashnote.ui.screen.edit.MemoEditScreen
 import com.minhyuuk.dashnote.ui.screen.edit.viewmodel.MemoEditViewModel
 import com.minhyuuk.dashnote.ui.screen.main.MemoListScreen
+import com.minhyuuk.dashnote.ui.screen.main.viewmodel.MemoListViewModel
 import com.minhyuuk.dashnote.ui.theme.DashNoteTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -46,15 +47,14 @@ fun DashNoteApp() {
     ) {
         composable("memo_list") {
             MemoListScreen(
-                onCreateMemoClick = {
-                    navController.navigate("memo_create")
-                }
+                viewModel = hiltViewModel<MemoListViewModel>(),
+                onCreateMemoClick = { navController.navigate("memo_create") }
             )
         }
         composable("memo_create") {
             MemoEditScreen(
-                onBackClick = { navController.popBackStack() },
-                viewModel = hiltViewModel<MemoEditViewModel>()
+                viewModel = hiltViewModel<MemoEditViewModel>(),
+                onBackClick = { navController.popBackStack() }
             )
         }
     }
