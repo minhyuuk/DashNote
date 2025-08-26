@@ -37,7 +37,8 @@ import com.minhyuuk.dashnote.ui.screen.main.viewmodel.FakeMemoListViewModel
 @Composable
 fun MemoListScreen(
     viewModel: MemoListViewModelInterface,
-    onCreateMemoClick: () -> Unit = {}
+    onCreateMemoClick: () -> Unit = {},
+    onCardClick: (MemoData) -> Unit = {}
 ) {
     val memoList by viewModel.memos.collectAsStateWithLifecycle()
     val searchText by viewModel.searchText.collectAsStateWithLifecycle()
@@ -220,7 +221,7 @@ fun MemoListScreen(
                             MemoCard(
                                 memoData = memoList[index],
                                 isFirstItem = index == 0,
-                                onCardClick = {},
+                                onCardClick = { onCardClick(memoList[index]) },
                                 onDeleteClick = { 
                                     viewModel.deleteMemo(memoList[index])
                                 }

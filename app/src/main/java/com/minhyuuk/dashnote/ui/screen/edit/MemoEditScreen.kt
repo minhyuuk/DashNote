@@ -33,11 +33,20 @@ import timber.log.Timber
 @Composable
 fun MemoEditScreen(
     onBackClick: () -> Unit = {},
-    viewModel: MemoEditViewModelInterface
+    viewModel: MemoEditViewModelInterface,
+    memoId: Long? = null
 ) {
     val titleText by viewModel.title.collectAsStateWithLifecycle()
     val descriptionText by viewModel.description.collectAsStateWithLifecycle()
     val isSaving by viewModel.isSaving.collectAsStateWithLifecycle()
+    
+    LaunchedEffect(memoId) {
+        memoId?.let { id ->
+            if (id > 0) {
+                viewModel.loadMemoById(id)
+            }
+        }
+    }
     
     val handleBackClick = {
         Timber.d("뒤로가기 버튼 클릭 - 메모 저장 시작")
@@ -63,7 +72,7 @@ fun MemoEditScreen(
                             modifier = Modifier.size(24.dp)
                         )
                         Text(
-                            text = "New Note",
+                            text = if (memoId != null && memoId > 0) "Edit Note" else "New Note",
                             color = MaterialTheme.colorScheme.onSurface,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Medium,

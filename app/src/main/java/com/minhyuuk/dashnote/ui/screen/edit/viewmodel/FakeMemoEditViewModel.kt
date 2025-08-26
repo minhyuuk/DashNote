@@ -1,5 +1,6 @@
 package com.minhyuuk.dashnote.ui.screen.edit.viewmodel
 
+import com.minhyuuk.dashnote.data.model.memo.MemoData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,4 +32,11 @@ object FakeMemoEditViewModel : MemoEditViewModelInterface {
     override fun hasContent(): Boolean {
         return _title.value.trim().isNotEmpty() || _description.value.trim().isNotEmpty()
     }
+
+    override fun loadMemo(memoData: MemoData) {
+        _title.value = memoData.title ?: ""
+        _description.value = memoData.description ?: ""
+    }
+
+    override fun loadMemoById(memoId: Long) {}
 }

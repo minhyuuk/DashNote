@@ -11,6 +11,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.minhyuuk.dashnote.ui.screen.edit.MemoEditScreen
 import com.minhyuuk.dashnote.ui.screen.edit.viewmodel.MemoEditViewModel
@@ -48,13 +50,27 @@ fun DashNoteApp() {
         composable("memo_list") {
             MemoListScreen(
                 viewModel = hiltViewModel<MemoListViewModel>(),
-                onCreateMemoClick = { navController.navigate("memo_create") }
+                onCreateMemoClick = { navController.navigate("memo_edit") },
+                onCardClick = { memoData -> 
+                    navController.navigate("memo_edit/${memoData.id}")
+                }
             )
         }
-        composable("memo_create") {
+        composable("memo_edit") {
             MemoEditScreen(
                 viewModel = hiltViewModel<MemoEditViewModel>(),
                 onBackClick = { navController.popBackStack() }
+            )
+        }
+        composable(
+            "memo_edit/{memoId}",
+            arguments = listOf(navArgument("memoId") { type = NavType.LongType })
+        ) {
+            val memoId = it.arguments?.getLong("memoId") ?: -1L
+            MemoEditScreen(
+                viewModel = hiltViewModel<MemoEditViewModel>(),
+                onBackClick = { navController.popBackStack() },
+                memoId = memoId
             )
         }
     }
