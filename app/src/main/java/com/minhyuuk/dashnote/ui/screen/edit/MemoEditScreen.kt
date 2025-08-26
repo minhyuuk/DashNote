@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import android.widget.Toast
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -22,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.activity.compose.BackHandler
 import com.minhyuuk.dashnote.R
 import com.minhyuuk.dashnote.ui.theme.DashNoteTheme
 import com.minhyuuk.dashnote.ui.extensions.dashedBorder
@@ -40,12 +40,10 @@ fun MemoEditScreen(
     val isSaving by viewModel.isSaving.collectAsStateWithLifecycle()
     val context = LocalContext.current
     
-    // isSaving 상태 변화 감지하여 Toast 표시
     LaunchedEffect(isSaving) {
         Timber.d("MemoEditScreen - isSaving 상태 변화: $isSaving")
         if (!isSaving && viewModel.hasContent()) {
             Timber.i("메모 저장 완료 - 제목: ${titleText.take(20)}, 내용: ${descriptionText.take(30)}")
-            Toast.makeText(context, "메모가 저장되었습니다", Toast.LENGTH_SHORT).show()
         } else if (!isSaving && !viewModel.hasContent()) {
             Timber.w("메모 저장 시도했으나 내용이 비어있음")
         }
@@ -55,6 +53,11 @@ fun MemoEditScreen(
         Timber.d("뒤로가기 버튼 클릭 - 메모 저장 시작")
         Timber.v("현재 제목: '${titleText}', 현재 내용: '${descriptionText}'")
         viewModel.saveMemo(onBackClick)
+    }
+    
+    BackHandler {
+        Timber.d("하드웨어 백 버튼/제스처 - 메모 저장 시작")
+        handleBackClick()
     }
 
     Scaffold(
