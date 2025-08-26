@@ -3,6 +3,7 @@ package com.minhyuuk.dashnote.data.repository
 import com.minhyuuk.dashnote.data.model.memo.MemoDao
 import com.minhyuuk.dashnote.data.model.memo.MemoData
 import kotlinx.coroutines.flow.Flow
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -28,7 +29,10 @@ class MemoRepository @Inject constructor(
             createdTime = timeFormat.format(Date(currentTime))
         )
         
-        return memoDao.insertMemo(memo)
+        Timber.d("메모 데이터 생성 : $memo")
+        val insertedId = memoDao.insertMemo(memo)
+        Timber.d("메모 삽입 완료 : ID = $insertedId")
+        return insertedId
     }
     
     suspend fun updateMemo(memo: MemoData) = memoDao.updateMemo(memo)

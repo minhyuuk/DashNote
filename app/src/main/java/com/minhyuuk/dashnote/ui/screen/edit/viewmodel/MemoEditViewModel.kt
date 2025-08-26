@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -42,10 +43,16 @@ class MemoEditViewModel @Inject constructor(
             if (titleText.isNotEmpty() || descriptionText.isNotEmpty()) {
                 _isSaving.value = true
                 try {
-                    memoRepository.insertMemo(titleText, descriptionText)
+                    Timber.d("Room 작업 시작 - 메모 저장 : title='$titleText', description='$descriptionText'")
+                    val result = memoRepository.insertMemo(titleText, descriptionText)
+                    Timber.d("Room 작업 완료 - 메모 저장 성공 : ID=$result")
+                } catch (e: Exception) {
+                    Timber.e(e, "Room 작업 실패 - 메모 저장 에러")
                 } finally {
                     _isSaving.value = false
                 }
+            } else {
+                Timber.d("Room 작업 생략 - 빈 메모")
             }
             onComplete()
         }
